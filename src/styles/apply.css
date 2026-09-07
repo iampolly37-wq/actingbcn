@@ -3,6 +3,7 @@
   --apply-orange: #e85d35;
   --apply-orange-dark: #cc4827;
 
+  height: 100svh;
   min-height: 100svh;
   display: grid;
   grid-template-rows: auto auto 1fr;
@@ -10,10 +11,28 @@
   overflow: hidden;
   background: var(--apply-yellow);
   color: var(--apply-orange);
+  line-height: normal;
 }
 
 .apply-shell [hidden] {
   display: none !important;
+}
+
+.apply-shell .sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.apply-shell button,
+.apply-shell input {
+  font-family: inherit;
 }
 
 .apply-brand-header {
@@ -75,18 +94,20 @@
 .apply-form {
   min-height: 0;
   display: grid;
-  grid-template-rows: 1fr auto auto;
+  grid-template-rows: minmax(0, 1fr) auto auto;
 }
 
 .apply-question-layout {
-  min-height: clamp(31.875rem, 67vh, 47.5rem);
+  min-height: 0;
+  height: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   animation: apply-enter 450ms ease both;
 }
 
 .apply-prompt-panel,
 .apply-answer-panel {
+  min-width: 0;
   padding: clamp(1.75rem, 4vw, 4rem);
 }
 
@@ -125,6 +146,7 @@
 }
 
 .apply-answer-panel > input {
+  min-width: 0;
   width: 100%;
   padding: 0.75rem 0 1.125rem;
   border: 0;
@@ -135,7 +157,12 @@
   font-family: inherit;
   font-size: clamp(2.25rem, 4.2vw, 4.75rem);
   font-weight: 300;
+  line-height: 1.05;
   letter-spacing: -0.045em;
+}
+
+#apply-contact {
+  font-size: clamp(1.75rem, 2.4vw, 3.5rem);
 }
 
 .apply-answer-panel > input::placeholder {
@@ -154,6 +181,8 @@
 }
 
 .apply-course-panel {
+  min-width: 0;
+  margin: 0;
   justify-content: flex-start;
   padding-top: clamp(4.375rem, 8vw, 6.875rem);
 }
@@ -281,11 +310,42 @@
 
 .apply-success-layout > p {
   align-self: flex-start;
-  max-width: 38.125rem;
+  max-width: 48rem;
   margin: 0;
   font-size: clamp(1.5625rem, 2.8vw, 3rem);
   line-height: 1.05;
   letter-spacing: -0.025em;
+}
+
+.apply-success-screen {
+  grid-template-rows: auto 1fr;
+}
+
+@media (height <= 50rem) and (width > 50rem) {
+  .apply-brand-header {
+    padding-bottom: 0.875rem;
+  }
+
+  .apply-progress {
+    padding-block: 0.75rem;
+  }
+
+  .apply-course-panel {
+    padding-top: 3.5rem;
+  }
+
+  .apply-course-option {
+    min-height: 4.75rem;
+  }
+
+  .apply-actions {
+    padding: 0.75rem 0;
+  }
+
+  .apply-primary-button,
+  .apply-back-button {
+    min-height: 3.5rem;
+  }
 }
 
 @keyframes apply-enter {
@@ -302,7 +362,9 @@
 
 @media (width <= 50rem) {
   .apply-shell {
+    height: auto;
     padding: 1.125rem 1.125rem 0.875rem;
+    overflow: visible;
   }
 
   .apply-progress {

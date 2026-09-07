@@ -70,6 +70,73 @@ test("the application form completes its three-step flow", async ({ page }) => {
   });
 });
 
+test("the application form stays aligned in a compact desktop viewport", async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    testInfo.project.name !== "desktop-chromium",
+    "Compact desktop layout contract",
+  );
+
+  await page.setViewportSize({ width: 1204, height: 677 });
+  await page.goto("/apply/");
+  await page.evaluate(() => document.fonts.ready);
+
+  await expect(page.getByText("Шаг 1 из 3", { exact: true })).toHaveCount(0);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollHeight <= window.innerHeight,
+    ),
+  ).toBe(true);
+
+  await page.getByLabel("Как вас зовут?").fill("Полина");
+  await page.getByRole("button", { name: /продолжить/i }).click();
+
+  const courseLayout = await page.evaluate(() => {
+    const heading = document.querySelector<HTMLElement>(
+      ".apply-prompt-panel h1",
+    );
+    const panel = document.querySelector<HTMLElement>(".apply-course-panel");
+    const headingBox = heading?.getBoundingClientRect();
+    return {
+      headingTop: headingBox?.top ?? -1,
+      headingBottom: headingBox?.bottom ?? Number.POSITIVE_INFINITY,
+      panelFits: (panel?.scrollWidth ?? 1) <= (panel?.clientWidth ?? 0),
+      pageFits: document.documentElement.scrollHeight <= window.innerHeight,
+    };
+  });
+  expect(courseLayout.headingTop).toBeGreaterThanOrEqual(0);
+  expect(courseLayout.headingBottom).toBeLessThanOrEqual(677);
+  expect(courseLayout.panelFits).toBe(true);
+  expect(courseLayout.pageFits).toBe(true);
+
+  await page
+    .locator(".apply-course-option")
+    .filter({ hasText: "Курс актёрского мастерства" })
+    .click();
+  await page.getByRole("button", { name: /продолжить/i }).click();
+
+  const contactLayout = await page
+    .locator("#apply-contact")
+    .evaluate((input) => {
+      const contactInput = input as HTMLInputElement;
+      const style = getComputedStyle(input);
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+      if (context) context.font = style.font;
+      return {
+        placeholderWidth:
+          context?.measureText(contactInput.placeholder).width ?? 0,
+        inputWidth: contactInput.clientWidth,
+        pageFits: document.documentElement.scrollHeight <= window.innerHeight,
+      };
+    });
+  expect(contactLayout.placeholderWidth).toBeLessThanOrEqual(
+    contactLayout.inputWidth,
+  );
+  expect(contactLayout.pageFits).toBe(true);
+});
+
 test("the application API rejects invalid submissions", async () => {
   const response = await submitApplication(
     new Request("https://actingbcn.com/api/apply", {
