@@ -1,0 +1,346 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import "../styles/apply.css";
+
+const title = "Записаться на курс";
+const description = "Оставьте заявку на курс Acting BCN в Барселоне.";
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  image="/apply-assets/og.png"
+>
+  <main class="apply-shell" id="main-content">
+    <header class="apply-brand-header">
+      <a href="/" aria-label="Актёрская Барселона — на главную">
+        <span class="apply-logo-box">
+          <img
+            class="apply-brand-logo"
+            src="/apply-assets/acting-bcn-logo.svg"
+            alt=""
+          />
+        </span>
+        <span>Актёрская<br />Барселона</span>
+      </a>
+    </header>
+
+    <div class="apply-progress">
+      <span class="sr-only" aria-live="polite" data-progress-label>
+        Шаг 1 из 3
+      </span>
+      <span data-current-step>01</span>
+      <i aria-hidden="true"><b data-progress-bar></b></i>
+      <span>03</span>
+    </div>
+
+    <form class="apply-form" data-apply-form novalidate>
+      <section class="apply-question-layout" data-step="0">
+        <div class="apply-prompt-panel">
+          <h1>Как вас<br />зовут?</h1>
+        </div>
+        <div class="apply-answer-panel">
+          <span class="apply-panel-index">01</span>
+          <label class="sr-only" for="apply-name">Как вас зовут?</label>
+          <input
+            type="text"
+            id="apply-name"
+            name="name"
+            autocomplete="name"
+            minlength="2"
+            maxlength="120"
+            placeholder="Ваше имя"
+            required
+          />
+        </div>
+      </section>
+
+      <section class="apply-question-layout" data-step="1" hidden>
+        <div class="apply-prompt-panel">
+          <h1>На какой курс<br />вы хотите пойти?</h1>
+        </div>
+        <fieldset class="apply-answer-panel apply-course-panel">
+          <legend class="sr-only">На какой курс вы хотите пойти?</legend>
+          <span class="apply-panel-index">02</span>
+          <div class="apply-course-list">
+            <label class="apply-course-option">
+              <input
+                type="radio"
+                name="course"
+                value="Курс актёрского мастерства"
+                required
+              />
+              <span class="apply-option-number">01</span>
+              <span>Курс актёрского мастерства</span>
+              <span class="apply-option-arrow" aria-hidden="true">↗</span>
+            </label>
+            <label class="apply-course-option">
+              <input type="radio" name="course" value="Курс по речи" />
+              <span class="apply-option-number">02</span>
+              <span>Курс по речи</span>
+              <span class="apply-option-arrow" aria-hidden="true">↗</span>
+            </label>
+            <label class="apply-course-option">
+              <input
+                type="radio"
+                name="course"
+                value="Интенсив по импровизации"
+              />
+              <span class="apply-option-number">03</span>
+              <span>Интенсив по импровизации</span>
+              <span class="apply-option-arrow" aria-hidden="true">↗</span>
+            </label>
+          </div>
+        </fieldset>
+      </section>
+
+      <section class="apply-question-layout" data-step="2" hidden>
+        <div class="apply-prompt-panel">
+          <h1>Контакт<br />для связи</h1>
+        </div>
+        <div class="apply-answer-panel">
+          <span class="apply-panel-index">03</span>
+          <label class="sr-only" for="apply-contact">
+            Telegram или номер телефона
+          </label>
+          <input
+            type="text"
+            id="apply-contact"
+            name="contact"
+            autocomplete="tel"
+            minlength="4"
+            maxlength="180"
+            placeholder="Telegram или номер телефона"
+            required
+          />
+          <label class="apply-honeypot" aria-hidden="true">
+            Не заполняйте это поле
+            <input
+              type="text"
+              name="website"
+              autocomplete="off"
+              tabindex="-1"
+            />
+          </label>
+        </div>
+      </section>
+
+      <div class="apply-actions">
+        <button class="apply-back-button" type="button" data-back hidden>
+          <span aria-hidden="true">←</span> Назад
+        </button>
+        <span data-action-spacer></span>
+        <button class="apply-primary-button" type="button" data-next disabled>
+          Продолжить <span aria-hidden="true">→</span>
+        </button>
+        <button class="apply-primary-button" type="submit" data-submit hidden>
+          <span data-submit-label>Отправить заявку</span>
+          <span aria-hidden="true">→</span>
+        </button>
+      </div>
+      <p class="apply-form-error" role="alert" data-error hidden></p>
+      <noscript>
+        <p class="apply-form-error">
+          Для заполнения формы необходимо включить JavaScript.
+        </p>
+      </noscript>
+    </form>
+
+    <section
+      class="apply-success-layout"
+      aria-live="polite"
+      data-success
+      hidden
+    >
+      <h1>Спасибо, что<br />оставили заявку</h1>
+      <p>Мы свяжемся с вами в течение пары часов.</p>
+    </section>
+  </main>
+
+  <script>
+    const form = document.querySelector<HTMLFormElement>("[data-apply-form]");
+    const progress = document.querySelector<HTMLElement>(".apply-progress");
+    const steps = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-step]"),
+    );
+    const currentStep = document.querySelector<HTMLElement>(
+      "[data-current-step]",
+    );
+    const progressBar = document.querySelector<HTMLElement>(
+      "[data-progress-bar]",
+    );
+    const progressLabel = document.querySelector<HTMLElement>(
+      "[data-progress-label]",
+    );
+    const backButton = document.querySelector<HTMLButtonElement>("[data-back]");
+    const nextButton = document.querySelector<HTMLButtonElement>("[data-next]");
+    const submitButton =
+      document.querySelector<HTMLButtonElement>("[data-submit]");
+    const submitLabel = document.querySelector<HTMLElement>(
+      "[data-submit-label]",
+    );
+    const actionSpacer = document.querySelector<HTMLElement>(
+      "[data-action-spacer]",
+    );
+    const errorMessage = document.querySelector<HTMLElement>("[data-error]");
+    const success = document.querySelector<HTMLElement>("[data-success]");
+    const nameInput = document.querySelector<HTMLInputElement>("#apply-name");
+    const contactInput =
+      document.querySelector<HTMLInputElement>("#apply-contact");
+    const courseInputs = Array.from(
+      document.querySelectorAll<HTMLInputElement>('input[name="course"]'),
+    );
+
+    if (
+      form &&
+      progress &&
+      currentStep &&
+      progressBar &&
+      progressLabel &&
+      backButton &&
+      nextButton &&
+      submitButton &&
+      submitLabel &&
+      actionSpacer &&
+      errorMessage &&
+      success &&
+      nameInput &&
+      contactInput
+    ) {
+      let activeStep = 0;
+      let sending = false;
+
+      const selectedCourse = () => courseInputs.find((input) => input.checked);
+
+      const canContinue = () => {
+        if (activeStep === 0) return nameInput.validity.valid;
+        if (activeStep === 1) return Boolean(selectedCourse());
+        return contactInput.validity.valid;
+      };
+
+      const syncCourseOptions = () => {
+        for (const input of courseInputs) {
+          input
+            .closest(".apply-course-option")
+            ?.classList.toggle("selected", input.checked);
+        }
+      };
+
+      const updateControls = () => {
+        const lastStep = activeStep === steps.length - 1;
+        nextButton.hidden = lastStep;
+        submitButton.hidden = !lastStep;
+        nextButton.disabled = !canContinue();
+        submitButton.disabled = !canContinue() || sending;
+        backButton.hidden = activeStep === 0;
+        actionSpacer.hidden = activeStep !== 0;
+      };
+
+      const renderStep = () => {
+        steps.forEach((step, index) => {
+          step.hidden = index !== activeStep;
+        });
+        currentStep.textContent = `0${activeStep + 1}`;
+        progressBar.style.width = `${((activeStep + 1) / steps.length) * 100}%`;
+        progressLabel.textContent = `Шаг ${activeStep + 1} из ${steps.length}`;
+        errorMessage.hidden = true;
+        syncCourseOptions();
+        updateControls();
+
+        const activeField =
+          activeStep === 0
+            ? nameInput
+            : activeStep === 2
+              ? contactInput
+              : selectedCourse();
+        window.setTimeout(() => activeField?.focus(), 50);
+      };
+
+      const validateCurrentStep = () => {
+        if (activeStep === 0) return nameInput.reportValidity();
+        if (activeStep === 1) {
+          if (selectedCourse()) return true;
+          courseInputs[0]?.reportValidity();
+          return false;
+        }
+        return contactInput.reportValidity();
+      };
+
+      const goNext = () => {
+        if (!validateCurrentStep() || activeStep >= steps.length - 1) return;
+        activeStep += 1;
+        renderStep();
+      };
+
+      nameInput.addEventListener("input", updateControls);
+      contactInput.addEventListener("input", updateControls);
+      nameInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          goNext();
+        }
+      });
+      courseInputs.forEach((input) => {
+        input.addEventListener("change", () => {
+          syncCourseOptions();
+          updateControls();
+        });
+      });
+      nextButton.addEventListener("click", goNext);
+      backButton.addEventListener("click", () => {
+        if (activeStep === 0 || sending) return;
+        activeStep -= 1;
+        renderStep();
+      });
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (!validateCurrentStep() || sending) return;
+
+        sending = true;
+        submitLabel.textContent = "Отправляем";
+        errorMessage.hidden = true;
+        updateControls();
+
+        const data = new FormData(form);
+        try {
+          const response = await fetch("/api/apply", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: data.get("name"),
+              course: data.get("course"),
+              contact: data.get("contact"),
+              website: data.get("website"),
+              consent: true,
+            }),
+          });
+
+          if (!response.ok) {
+            const result = (await response.json().catch(() => null)) as {
+              error?: string;
+            } | null;
+            throw new Error(result?.error || "Не удалось отправить заявку");
+          }
+
+          form.hidden = true;
+          progress.hidden = true;
+          success.hidden = false;
+          success.querySelector("h1")?.focus();
+        } catch (error) {
+          errorMessage.textContent =
+            error instanceof Error
+              ? error.message
+              : "Не удалось отправить заявку";
+          errorMessage.hidden = false;
+        } finally {
+          sending = false;
+          submitLabel.textContent = "Отправить заявку";
+          updateControls();
+        }
+      });
+
+      renderStep();
+    }
+  </script>
+</BaseLayout>

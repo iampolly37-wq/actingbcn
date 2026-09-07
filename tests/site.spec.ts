@@ -1,7 +1,8 @@
 import { expect, test } from "@playwright/test";
+import { POST as submitApplication } from "../api/apply";
 
 const coursePaths = ["acting", "speech", "improv", "custom"];
-const courseSignupUrl = "https://acting-bcn-course.cherars.chatgpt.site/";
+const courseSignupUrl = "/apply/";
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -19,6 +20,71 @@ test("the home page exposes every course and a working CTA", async ({
   await expect(
     page.getByRole("link", { name: /выбрать курс/i }),
   ).toHaveAttribute("href", "#courses");
+});
+
+test("the application form completes its three-step flow", async ({ page }) => {
+  let submission: Record<string, unknown> | undefined;
+  await page.route("**/api/apply", async (route) => {
+    submission = route.request().postDataJSON() as Record<string, unknown>;
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ ok: true }),
+    });
+  });
+
+  await page.goto("/apply/");
+  await expect(page).toHaveTitle(/Записаться на курс/);
+  await expect(
+    page.getByRole("heading", { name: "Как вас зовут?" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "На какой курс вы хотите пойти?" }),
+  ).toBeHidden();
+  await expect(
+    page.getByRole("heading", { name: "Контакт для связи" }),
+  ).toBeHidden();
+
+  await page.getByLabel("Как вас зовут?").fill("Полина");
+  await page.getByRole("button", { name: /продолжить/i }).click();
+  await expect(
+    page.getByRole("heading", { name: "На какой курс вы хотите пойти?" }),
+  ).toBeVisible();
+  await page
+    .locator(".apply-course-option")
+    .filter({ hasText: "Курс актёрского мастерства" })
+    .click();
+  await expect(page.getByLabel("Курс актёрского мастерства")).toBeChecked();
+  await page.getByRole("button", { name: /продолжить/i }).click();
+  await page.getByLabel("Telegram или номер телефона").fill("@polina");
+  await page.getByRole("button", { name: /отправить заявку/i }).click();
+
+  await expect(
+    page.getByRole("heading", { name: "Спасибо, что оставили заявку" }),
+  ).toBeVisible();
+  expect(submission).toMatchObject({
+    name: "Полина",
+    course: "Курс актёрского мастерства",
+    contact: "@polina",
+    consent: true,
+  });
+});
+
+test("the application API rejects invalid submissions", async () => {
+  const response = await submitApplication(
+    new Request("https://actingbcn.com/api/apply", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: "A",
+        course: "Несуществующий курс",
+        contact: "1",
+        consent: false,
+      }),
+    }),
+  );
+
+  expect(response.status).toBe(400);
 });
 
 test("the shared logo is present in page headers and footers", async ({
