@@ -4,6 +4,10 @@ const allowedCourses = new Set([
   "Интенсив по импровизации",
 ]);
 
+declare const process: {
+  env: Record<string, string | undefined>;
+};
+
 export const maxDuration = 10;
 
 function json(body: Record<string, unknown>, status = 200) {
