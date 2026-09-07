@@ -25,10 +25,7 @@ const description = "Оставьте заявку на курс Acting BCN в �
       </a>
     </header>
 
-    <div class="apply-progress">
-      <span class="sr-only" aria-live="polite" data-progress-label>
-        Шаг 1 из 3
-      </span>
+    <div class="apply-progress" role="group" aria-label="Шаг 1 из 3">
       <span data-current-step>01</span>
       <i aria-hidden="true"><b data-progress-bar></b></i>
       <span>03</span>
@@ -153,7 +150,7 @@ const description = "Оставьте заявку на курс Acting BCN в �
       hidden
     >
       <h1>Спасибо, что<br />оставили заявку</h1>
-      <p>Мы свяжемся с вами в течение пары часов.</p>
+      <p>Мы свяжемся с вами в течение пары&nbsp;часов.</p>
     </section>
   </main>
 
@@ -168,9 +165,6 @@ const description = "Оставьте заявку на курс Acting BCN в �
     );
     const progressBar = document.querySelector<HTMLElement>(
       "[data-progress-bar]",
-    );
-    const progressLabel = document.querySelector<HTMLElement>(
-      "[data-progress-label]",
     );
     const backButton = document.querySelector<HTMLButtonElement>("[data-back]");
     const nextButton = document.querySelector<HTMLButtonElement>("[data-next]");
@@ -196,7 +190,6 @@ const description = "Оставьте заявку на курс Acting BCN в �
       progress &&
       currentStep &&
       progressBar &&
-      progressLabel &&
       backButton &&
       nextButton &&
       submitButton &&
@@ -242,7 +235,10 @@ const description = "Оставьте заявку на курс Acting BCN в �
         });
         currentStep.textContent = `0${activeStep + 1}`;
         progressBar.style.width = `${((activeStep + 1) / steps.length) * 100}%`;
-        progressLabel.textContent = `Шаг ${activeStep + 1} из ${steps.length}`;
+        progress.setAttribute(
+          "aria-label",
+          `Шаг ${activeStep + 1} из ${steps.length}`,
+        );
         errorMessage.hidden = true;
         syncCourseOptions();
         updateControls();
@@ -326,6 +322,7 @@ const description = "Оставьте заявку на курс Acting BCN в �
           form.hidden = true;
           progress.hidden = true;
           success.hidden = false;
+          form.closest(".apply-shell")?.classList.add("apply-success-screen");
           success.querySelector("h1")?.focus();
         } catch (error) {
           errorMessage.textContent =
