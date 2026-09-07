@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 const coursePaths = ["acting", "speech", "improv", "custom"];
-const typeformUrl = "https://form.typeform.com/to/o7LSqGIk";
+const courseSignupUrl = "https://acting-bcn-course.cherars.chatgpt.site/";
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -179,17 +179,15 @@ test("navigation and application controls meet the mobile touch target", async (
   await expect(page.locator(".teacher-card img")).toBeVisible();
   await expect(
     page.getByRole("link", { name: "Присоединиться к курсу" }),
-  ).toHaveAttribute("href", typeformUrl);
+  ).toHaveAttribute("href", courseSignupUrl);
 });
 
 for (const course of coursePaths) {
-  test(`${course} uses the shared Typeform and request CTA`, async ({
-    page,
-  }) => {
+  test(`${course} uses the shared signup and request CTA`, async ({ page }) => {
     await page.goto(`/courses/${course}/`);
 
     const factsCta = page.getByRole("link", { name: "Выбрать этот курс" });
-    await expect(factsCta).toHaveAttribute("href", typeformUrl);
+    await expect(factsCta).toHaveAttribute("href", courseSignupUrl);
     await expect(factsCta.locator("span")).toHaveCount(0);
 
     const request = page.locator(".request-section");
@@ -199,7 +197,7 @@ for (const course of coursePaths) {
     );
     await expect(
       request.getByRole("link", { name: "Присоединиться к курсу" }),
-    ).toHaveAttribute("href", typeformUrl);
+    ).toHaveAttribute("href", courseSignupUrl);
     await expect(
       request.getByRole("link", { name: "Вернуться к курсам" }),
     ).toHaveAttribute("href", "/#courses");
