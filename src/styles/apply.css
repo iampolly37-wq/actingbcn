@@ -150,7 +150,6 @@
   width: 100%;
   padding: 0.75rem 0 1.125rem;
   border: 0;
-  border-bottom: 2px solid var(--apply-yellow);
   outline: 0;
   background: transparent;
   color: var(--apply-yellow);
@@ -173,11 +172,6 @@
   position: absolute;
   opacity: 0;
   pointer-events: none;
-}
-
-.apply-answer-panel > input:focus-visible {
-  outline: 2px solid var(--apply-yellow);
-  outline-offset: 0.5rem;
 }
 
 .apply-course-panel {
