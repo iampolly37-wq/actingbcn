@@ -14,6 +14,7 @@
   "heroImage": "../../assets/images/courses/speech.jpg",
   "heroAlt": "Практика сценической речи",
   "cardCaption": "Старт 06.10",
+  "spotsLeft": 4,
   "facts": [
     { "label": "Старт", "lines": ["06.10"], "datetime": "2026-10-06" },
     { "label": "Продолжительность", "lines": ["4 недели (8 занятий)"] },

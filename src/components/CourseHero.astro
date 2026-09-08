@@ -7,6 +7,15 @@ interface Props {
 }
 
 const { course } = Astro.props;
+const spotsLeft = course.data.spotsLeft;
+const spotsWord = spotsLeft
+  ? spotsLeft % 10 === 1 && spotsLeft % 100 !== 11
+    ? "место"
+    : [2, 3, 4].includes(spotsLeft % 10) &&
+        ![12, 13, 14].includes(spotsLeft % 100)
+      ? "места"
+      : "мест"
+  : "";
 ---
 
 <header class="detail-hero">
@@ -24,7 +33,17 @@ const { course } = Astro.props;
     />
   </div>
   <div class="detail-title">
-    <p class="course-type">{course.data.type}</p>
+    <div class="detail-meta">
+      <p class="course-type">{course.data.type}</p>
+      {
+        spotsLeft && (
+          <p class="course-availability">
+            <span aria-hidden="true" />
+            Осталось {spotsLeft} {spotsWord}
+          </p>
+        )
+      }
+    </div>
     <h1>{course.data.title}</h1>
     <p class="detail-intro">{course.data.intro}</p>
   </div>

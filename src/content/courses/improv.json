@@ -13,6 +13,7 @@
   "heroAlt": "Участники интенсива по импровизации",
   "cardImagePosition": "center 30%",
   "cardCaption": "Старт 22.09",
+  "spotsLeft": 6,
   "facts": [
     { "label": "Старт", "lines": ["22.09"], "datetime": "2026-09-22" },
     { "label": "Продолжительность", "lines": ["2 недели (4 занятия)"] },

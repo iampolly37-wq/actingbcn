@@ -3,6 +3,11 @@ import { POST as submitApplication } from "../api/apply";
 
 const coursePaths = ["acting", "speech", "improv", "custom"];
 const courseSignupUrl = "/apply/";
+const courseAvailability = {
+  acting: "Осталось 5 мест",
+  speech: "Осталось 4 места",
+  improv: "Осталось 6 мест",
+};
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -246,6 +251,22 @@ for (const course of coursePaths) {
     expect(widths.document).toBeLessThanOrEqual(widths.viewport);
   });
 }
+
+for (const [course, availability] of Object.entries(courseAvailability)) {
+  test(`${course} course page shows remaining availability`, async ({
+    page,
+  }) => {
+    await page.goto(`/courses/${course}/`);
+    await expect(page.locator(".course-availability")).toHaveText(availability);
+  });
+}
+
+test("custom event page does not show course availability", async ({
+  page,
+}) => {
+  await page.goto("/courses/custom/");
+  await expect(page.locator(".course-availability")).toHaveCount(0);
+});
 
 test("course facts keep one shared and aligned layout", async ({
   page,
