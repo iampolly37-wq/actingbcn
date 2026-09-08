@@ -35,6 +35,14 @@ test("the application form completes its three-step flow", async ({ page }) => {
 
   await page.goto("/apply/");
   await expect(page).toHaveTitle(/Записаться на курс/);
+  await expect(page.locator(".apply-brand-header")).not.toContainText(
+    "Актёрская Барселона",
+  );
+  await expect(page.locator(".apply-brand-logo")).toBeVisible();
+  await expect(page.locator("#apply-name")).toHaveCSS(
+    "border-bottom-width",
+    "0px",
+  );
   await expect(
     page.getByRole("heading", { name: "Как вас зовут?" }),
   ).toBeVisible();
