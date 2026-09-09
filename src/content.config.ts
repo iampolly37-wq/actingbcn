@@ -36,6 +36,7 @@ const courses = defineCollection({
       cardImagePosition: z.string().default("center"),
       cardCaption: z.string(),
       facts: z.array(factSchema).min(1),
+      spotsLeft: z.number().int().positive().optional(),
       offer: z.string().optional(),
       teachers: z.array(reference("teachers")).default([]),
       seoDescription: z.string(),
