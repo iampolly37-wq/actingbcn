@@ -257,7 +257,25 @@ for (const [course, availability] of Object.entries(courseAvailability)) {
     page,
   }) => {
     await page.goto(`/courses/${course}/`);
-    await expect(page.locator(".course-availability")).toHaveText(availability);
+    const availabilityNotice = page.locator(
+      ".course-facts .course-availability",
+    );
+    const signupButton = page.locator(".course-facts .button-dark");
+
+    await expect(availabilityNotice).toHaveText(availability);
+    await expect(
+      page.locator(".detail-title .course-availability"),
+    ).toHaveCount(0);
+    await expect(availabilityNotice.locator("span")).toHaveCount(0);
+    expect(
+      await availabilityNotice.evaluate(
+        (notice) => getComputedStyle(notice).backgroundColor,
+      ),
+    ).toBe(
+      await signupButton.evaluate(
+        (button) => getComputedStyle(button).backgroundColor,
+      ),
+    );
   });
 }
 
