@@ -67,7 +67,11 @@ const structuredData = [
         <p class="section-index">{course.data.sectionLabel}</p>
         {course.data.story.map((paragraph) => <p>{paragraph}</p>)}
       </div>
-      <CourseFacts facts={course.data.facts} offer={course.data.offer} />
+      <CourseFacts
+        facts={course.data.facts}
+        offer={course.data.offer}
+        spotsLeft={course.data.spotsLeft}
+      />
     </section>
 
     {

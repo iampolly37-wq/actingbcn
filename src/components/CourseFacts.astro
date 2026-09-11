@@ -6,9 +6,18 @@ type Facts = CollectionEntry<"courses">["data"]["facts"];
 interface Props {
   facts: Facts;
   offer?: string;
+  spotsLeft?: number;
 }
 
-const { facts, offer } = Astro.props;
+const { facts, offer, spotsLeft } = Astro.props;
+const spotsWord = spotsLeft
+  ? spotsLeft % 10 === 1 && spotsLeft % 100 !== 11
+    ? "место"
+    : [2, 3, 4].includes(spotsLeft % 10) &&
+        ![12, 13, 14].includes(spotsLeft % 100)
+      ? "места"
+      : "мест"
+  : "";
 ---
 
 <aside class="course-facts" aria-label="Условия">
@@ -34,5 +43,14 @@ const { facts, offer } = Astro.props;
     }
   </dl>
   {offer && <p class="course-offer">{offer}</p>}
-  <a class="button button-dark" href="/apply/"> Выбрать этот курс </a>
+  <div class="course-facts__actions">
+    {
+      spotsLeft && (
+        <p class="button course-availability">
+          Осталось {spotsLeft} {spotsWord}
+        </p>
+      )
+    }
+    <a class="button button-dark" href="/apply/"> Выбрать этот курс </a>
+  </div>
 </aside>
