@@ -266,7 +266,6 @@
   border-color: var(--color-brand);
   background: var(--color-brand);
   color: var(--color-paper);
-  text-transform: uppercase;
 }
 
 .teacher-card {
