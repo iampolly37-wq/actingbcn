@@ -445,6 +445,36 @@ test("updated course copy is rendered without expired offers", async ({
   );
 });
 
+test("started courses invite visitors to join instead of showing past dates", async ({
+  page,
+}) => {
+  const startedCaption = "Уже идет, но еще можно присоединиться";
+
+  await page.goto("/");
+  for (const title of [
+    "Курс актерского мастерства",
+    "Интенсив по импровизации",
+  ]) {
+    const card = page.locator(".course-card").filter({ hasText: title });
+    await expect(card.locator(".course-card-footer > p")).toHaveText(
+      startedCaption,
+    );
+  }
+  await expect(
+    page
+      .locator(".course-card")
+      .filter({ hasText: "Курс по речи" })
+      .locator(".course-card-footer > p"),
+  ).toHaveText("Старт 06.10");
+
+  for (const course of ["acting", "improv"]) {
+    await page.goto(`/courses/${course}/`);
+    const startValue = page.locator(".course-facts dd").first();
+    await expect(startValue).toHaveText(startedCaption);
+    await expect(startValue.locator("time")).toHaveCount(0);
+  }
+});
+
 test("course facts produce a reviewable visual artifact", async ({
   page,
 }, testInfo) => {
